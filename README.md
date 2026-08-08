@@ -43,7 +43,7 @@ make check
 make dist VERSION=dev
 ```
 
-Version tags publish Linux `amd64` and `arm64` binaries together with SHA-256 checksums. See [CONTRIBUTING.md](CONTRIBUTING.md) for contributor and security guidance.
+Every merge to `main` creates the next patch version tag and publishes Linux `amd64` and `arm64` binaries together with SHA-256 checksums. See [CONTRIBUTING.md](CONTRIBUTING.md) for contributor and security guidance.
 
 ## Contributing
 

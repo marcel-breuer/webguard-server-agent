@@ -1,0 +1,17 @@
+{
+  "report_url": "https://webguard.example/api/v1/server-health/replace-with-report-token",
+  "interval": "60s",
+  "queue": {
+    "directory": "/var/lib/webguard-server-agent/queue",
+    "max_bytes": 16777216,
+    "max_age": "24h"
+  },
+  "service_checks": [
+    {
+      "id": "app-health",
+      "type": "http",
+      "target": "http://127.0.0.1:8080/health",
+      "timeout": "5s"
+    }
+  ]
+}

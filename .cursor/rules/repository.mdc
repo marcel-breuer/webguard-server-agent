@@ -1,0 +1,14 @@
+---
+description: Repository engineering, validation, and security rules
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+Read `CONTRIBUTING.md` before changing the repository.
+
+- Prefer the Dockerfile for builds and run `make check` before submitting changes.
+- Keep Linux release support limited to `amd64` and `arm64` unless explicitly expanded.
+- Preserve outbound-only, least-privilege operation. Do not add remote command execution or undocumented telemetry.
+- Do not commit or log credentials, report URLs, local configuration, or customer data.
+- Keep changes focused and update tests and documentation with behaviour changes.

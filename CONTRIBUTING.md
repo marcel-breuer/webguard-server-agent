@@ -1,0 +1,30 @@
+# Contributing
+
+Thank you for contributing to WebGuard Server Agent. Please discuss substantial changes in an issue before opening a pull request.
+
+## Development
+
+The project uses Go and supports Linux `amd64` and `arm64` release artifacts. Use the repository Dockerfile for a production-like build:
+
+```sh
+docker build -t webguard-server-agent .
+```
+
+Run the complete quality suite before opening a pull request:
+
+```sh
+make check
+make dist VERSION=dev
+```
+
+Keep changes focused and add tests for behaviour changes. Run `gofmt` on changed Go files.
+
+## Security and privacy
+
+Do not commit report URLs, tokens, customer addresses, credentials, local configuration, or captured telemetry. The package must remain outbound-only, verify TLS by default, avoid remote execution, and collect only the documented metrics.
+
+Report security issues privately to the maintainers rather than publishing sensitive details in an issue.
+
+## Releases
+
+Version tags trigger a release build for both supported Linux architectures. Release artifacts include a `SHA256SUMS` file. Validate the checksums before publishing installation instructions.

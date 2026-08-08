@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "report_id": "f1f1c5de-45d1-4d74-b5de-4d0c4df415e7",
+  "sampled_at": "2026-08-08T12:00:00Z",
+  "host": {
+    "cpu_usage_percent": 42.5,
+    "logical_cpu_count": 4,
+    "load_average_1m": 1.42,
+    "load_average_5m": 1.1,
+    "load_average_15m": 0.94,
+    "ram_usage_percent": 68.2,
+    "swap_usage_percent": 4.1,
+    "uptime_seconds": 86400
+  },
+  "service_checks": [{
+    "id": "app-health",
+    "success": true,
+    "response_time_ms": 38.4,
+    "status_code": 200
+  }],
+  "agent": {"version": "1.0.0"}
+}

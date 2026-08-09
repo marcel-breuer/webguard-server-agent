@@ -59,10 +59,55 @@ jobs:
       - name: Build Linux artifacts
         env:
           VERSION: ${{ needs.create-tag.outputs.tag }}
-        run: make dist VERSION="$VERSION"
+        run: |
+          make dist VERSION="$VERSION"
+          make deb VERSION="$VERSION"
+
+      - name: Import APT repository signing key
+        env:
+          APT_REPOSITORY_SIGNING_KEY_B64: ${{ secrets.APT_REPOSITORY_SIGNING_KEY_B64 }}
+        run: |
+          test -n "$APT_REPOSITORY_SIGNING_KEY_B64"
+          install -d -m 0700 "$RUNNER_TEMP/apt-gnupg"
+          echo "$APT_REPOSITORY_SIGNING_KEY_B64" | base64 --decode | gpg --batch --homedir "$RUNNER_TEMP/apt-gnupg" --import
+
+      - name: Build and validate APT repository
+        env:
+          GNUPGHOME: ${{ runner.temp }}/apt-gnupg
+          GPG_KEY_ID: 15DC3CB2BDB5E3C325B15B5D54F445D599EAACA2
+          APT_REPOSITORY_SIGNING_PASSPHRASE: ${{ secrets.APT_REPOSITORY_SIGNING_PASSPHRASE }}
+        run: |
+          test -n "$APT_REPOSITORY_SIGNING_PASSPHRASE"
+          repository_dir="$RUNNER_TEMP/webguard-server-agent-apt"
+          ./scripts/build-apt-repository.sh "$repository_dir" dist/deb
+          ./scripts/test-apt-install.sh "$repository_dir" packaging/apt/webguard-server-agent-archive-keyring.asc "$VERSION"
+
+      - name: Publish APT repository
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.create-tag.outputs.tag }}
+          APT_REPOSITORY_SIGNING_PASSPHRASE: ${{ secrets.APT_REPOSITORY_SIGNING_PASSPHRASE }}
+        run: |
+          repository_dir="$RUNNER_TEMP/webguard-server-agent-apt-publish"
+          if ! git clone --depth 1 --branch gh-pages "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "$repository_dir"; then
+            rm -rf "$repository_dir"
+            mkdir -p "$repository_dir"
+            git -C "$repository_dir" init
+            git -C "$repository_dir" checkout --orphan gh-pages
+            git -C "$repository_dir" remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          fi
+          export GNUPGHOME="$RUNNER_TEMP/apt-gnupg"
+          export GPG_KEY_ID=15DC3CB2BDB5E3C325B15B5D54F445D599EAACA2
+          export APT_REPOSITORY_SIGNING_PASSPHRASE
+          ./scripts/build-apt-repository.sh "$repository_dir" dist/deb
+          git -C "$repository_dir" config user.name "github-actions[bot]"
+          git -C "$repository_dir" config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C "$repository_dir" add --all
+          git -C "$repository_dir" commit -m "chore: publish APT repository $TAG"
+          git -C "$repository_dir" push origin gh-pages
 
       - name: Publish release
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ needs.create-tag.outputs.tag }}
-        run: gh release create "$TAG" dist/webguard-server-agent_* dist/SHA256SUMS --generate-notes --title "$TAG"
+        run: gh release create "$TAG" dist/webguard-server-agent_* dist/deb/*.deb dist/SHA256SUMS packaging/apt/webguard-server-agent-archive-keyring.asc --generate-notes --title "$TAG"

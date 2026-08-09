@@ -1,0 +1,16 @@
+#!/bin/sh
+set -eu
+
+case "$1" in
+  configure)
+    install -d -m 0750 -o webguard-server-agent -g webguard-server-agent /etc/webguard-server-agent /var/lib/webguard-server-agent/queue
+    if [ ! -f /etc/webguard-server-agent/config.json ]; then
+      install -m 0600 -o webguard-server-agent -g webguard-server-agent /usr/share/webguard-server-agent/config.example.json /etc/webguard-server-agent/config.json
+    fi
+
+    if [ -d /run/systemd/system ]; then
+      systemctl daemon-reload
+      systemctl enable --now webguard-server-agent.service
+    fi
+    ;;
+esac

@@ -1,0 +1,6 @@
+#!/bin/sh
+set -eu
+
+if ! getent passwd webguard-server-agent >/dev/null 2>&1; then
+  adduser --system --group --no-create-home --home /nonexistent --shell /usr/sbin/nologin webguard-server-agent
+fi

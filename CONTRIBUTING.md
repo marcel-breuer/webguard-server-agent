@@ -27,4 +27,6 @@ Report security issues privately to the maintainers rather than publishing sensi
 
 ## Releases
 
-Every merge to `main` creates the next patch version tag and triggers a release build for both supported Linux architectures. Release artifacts include a `SHA256SUMS` file. Validate the checksums before publishing installation instructions.
+Every merge to `main` creates the next patch version tag and triggers a release build for both supported Linux architectures. The release publishes standalone binaries, Debian packages, and a signed APT repository. Release artifacts include a `SHA256SUMS` file. Validate the checksums before publishing installation instructions.
+
+The repository signing key is managed only through encrypted GitHub Actions secrets. Key rotation requires replacing the public key in `packaging/apt/` and publishing updated repository metadata before changing installation instructions.

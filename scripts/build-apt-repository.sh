@@ -1,15 +1,18 @@
 #!/bin/sh
 set -eu
 
-repository_directory=${1:?usage: build-apt-repository.sh REPOSITORY_DIRECTORY PACKAGE_DIRECTORY}
-package_directory=${2:?usage: build-apt-repository.sh REPOSITORY_DIRECTORY PACKAGE_DIRECTORY}
+repository_directory=${1:?usage: build-apt-repository.sh REPOSITORY_DIRECTORY PACKAGE_DIRECTORY [KEYRING]}
+package_directory=${2:?usage: build-apt-repository.sh REPOSITORY_DIRECTORY PACKAGE_DIRECTORY [KEYRING]}
+keyring=${3:-packaging/apt/webguard-server-agent-archive-keyring.asc}
 
 : "${GNUPGHOME:?GNUPGHOME must contain the imported repository signing key}"
 : "${GPG_KEY_ID:?GPG_KEY_ID must identify the repository signing key}"
 : "${APT_REPOSITORY_SIGNING_PASSPHRASE:?APT_REPOSITORY_SIGNING_PASSPHRASE is required}"
 
 mkdir -p "$repository_directory/pool/main/w/webguard-server-agent"
+test -f "$keyring"
 touch "$repository_directory/.nojekyll"
+install -m 0644 "$keyring" "$repository_directory/webguard-server-agent-archive-keyring.asc"
 find "$package_directory" -maxdepth 1 -type f -name 'webguard-server-agent_*.deb' -exec cp {} "$repository_directory/pool/main/w/webguard-server-agent/" \;
 
 for architecture in amd64 arm64; do

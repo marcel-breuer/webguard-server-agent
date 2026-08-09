@@ -8,6 +8,24 @@ The agent sends the versioned Server Health report defined by the [Core API cont
 
 ## Install and configure
 
+### Debian and Ubuntu with APT
+
+The signed APT repository supports Debian 12 and Ubuntu 24.04 on `amd64` and `arm64`.
+
+```sh
+sudo install -d -m 0755 /etc/apt/keyrings
+curl -fsSL https://marcel-breuer.github.io/webguard-server-agent/webguard-server-agent-archive-keyring.asc | sudo tee /etc/apt/keyrings/webguard-server-agent.asc >/dev/null
+echo "deb [signed-by=/etc/apt/keyrings/webguard-server-agent.asc] https://marcel-breuer.github.io/webguard-server-agent stable main" | sudo tee /etc/apt/sources.list.d/webguard-server-agent.list >/dev/null
+sudo apt-get update
+sudo apt-get install webguard-server-agent
+sudoedit /etc/webguard-server-agent/config.json
+sudo systemctl restart webguard-server-agent
+```
+
+The package installs the systemd unit, creates the dedicated `webguard-server-agent` user, enables the service, and preserves configuration and queued reports during upgrades. Remove the package with `sudo apt-get remove webguard-server-agent`; use `sudo apt-get purge webguard-server-agent` only when you also intend to remove the configuration and queued reports.
+
+### Manual installation
+
 Download a verified release for Linux `amd64` or `arm64`, verify its SHA-256 checksum, then unpack it on the customer server. Run the included installer as root:
 
 ```sh
@@ -26,7 +44,7 @@ sudo webguard-server-agent --once
 sudo journalctl -u webguard-server-agent -f
 ```
 
-For an upgrade, stop the unit, replace `/usr/local/bin/webguard-server-agent` with a checksum-verified release binary, and start it again. To roll back, repeat those steps with the prior verified binary. The on-disk queue is retained across restarts. To uninstall, disable the unit, remove the binary and unit file, then deliberately remove `/etc/webguard-server-agent` and `/var/lib/webguard-server-agent` only after retaining any configuration or queue data you need.
+For a manual upgrade, stop the unit, replace `/usr/bin/webguard-server-agent` with a checksum-verified release binary, and start it again. To roll back, repeat those steps with the prior verified binary. The on-disk queue is retained across restarts. To uninstall, disable the unit, remove the binary and unit file, then deliberately remove `/etc/webguard-server-agent` and `/var/lib/webguard-server-agent` only after retaining any configuration or queue data you need.
 
 ## Reliability and privacy
 
@@ -43,7 +61,7 @@ make check
 make dist VERSION=dev
 ```
 
-Every merge to `main` creates the next patch version tag and publishes Linux `amd64` and `arm64` binaries together with SHA-256 checksums. See [CONTRIBUTING.md](CONTRIBUTING.md) for contributor and security guidance.
+Every merge to `main` creates the next patch version tag and publishes Linux `amd64` and `arm64` binaries, Debian packages, and SHA-256 checksums. See [CONTRIBUTING.md](CONTRIBUTING.md) for contributor and security guidance.
 
 ## Contributing
 

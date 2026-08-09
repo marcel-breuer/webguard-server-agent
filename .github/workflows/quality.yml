@@ -25,3 +25,6 @@ jobs:
 
       - name: Build Linux artifacts
         run: make dist VERSION=ci
+
+      - name: Build Debian packages
+        run: make deb VERSION=v0.0.0

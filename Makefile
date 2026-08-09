@@ -2,7 +2,7 @@ VERSION ?= dev
 DIST_DIR ?= dist
 PACKAGE = webguard-server-agent
 
-.PHONY: build build-linux-amd64 build-linux-arm64 check fmt-check test vet dist clean
+.PHONY: build build-linux-amd64 build-linux-arm64 check fmt-check test vet dist deb clean
 
 build:
 	go build -trimpath -ldflags "-s -w -X main.version=$(VERSION)" -o bin/$(PACKAGE) ./cmd/$(PACKAGE)
@@ -28,6 +28,10 @@ check: fmt-check vet test
 
 dist: build-linux-amd64 build-linux-arm64
 	cd $(DIST_DIR) && sha256sum $(PACKAGE)_$(VERSION)_linux_amd64 $(PACKAGE)_$(VERSION)_linux_arm64 > SHA256SUMS
+
+deb:
+	./scripts/build-deb.sh $(VERSION) amd64 $(DIST_DIR)/deb
+	./scripts/build-deb.sh $(VERSION) arm64 $(DIST_DIR)/deb
 
 clean:
 	rm -rf bin $(DIST_DIR)

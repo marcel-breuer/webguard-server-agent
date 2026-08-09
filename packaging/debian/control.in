@@ -1,0 +1,11 @@
+Package: webguard-server-agent
+Version: @VERSION@
+Section: admin
+Priority: optional
+Architecture: @ARCH@
+Maintainer: WebGuard <security@marcel-breuer.dev>
+Depends: systemd
+Description: Privacy-focused outbound-only WebGuard server telemetry agent
+ The WebGuard Server Agent collects bounded local server telemetry and sends it
+ to a configured WebGuard Server Health endpoint. It exposes no inbound
+ listener and does not execute remote commands.

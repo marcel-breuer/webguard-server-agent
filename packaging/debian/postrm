@@ -1,0 +1,11 @@
+#!/bin/sh
+set -eu
+
+case "$1" in
+  purge)
+    rm -rf /etc/webguard-server-agent /var/lib/webguard-server-agent
+    if getent passwd webguard-server-agent >/dev/null 2>&1; then
+      deluser --system webguard-server-agent || true
+    fi
+    ;;
+esac

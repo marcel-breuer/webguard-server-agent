@@ -1,0 +1,17 @@
+Package: webguard-server-agent
+Version: 0.1.1
+Architecture: amd64
+Maintainer: WebGuard <security@marcel-breuer.dev>
+Depends: systemd
+Filename: pool/main/w/webguard-server-agent/webguard-server-agent_0.1.1_amd64.deb
+Size: 2151954
+MD5sum: 9061f432c3587cd367eb52ffba79f223
+SHA1: 9f21228753f73c460d64338001b166ffff3d4442
+SHA256: cf66fe457ac8775cf8c3c48c6c0ef0d286686aa0d54ae7177f20767f1f10c4e6
+Section: admin
+Priority: optional
+Description: Privacy-focused outbound-only WebGuard server telemetry agent
+ The WebGuard Server Agent collects bounded local server telemetry and sends it
+ to a configured WebGuard Server Health endpoint. It exposes no inbound
+ listener and does not execute remote commands.
+

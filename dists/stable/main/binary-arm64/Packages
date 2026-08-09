@@ -1,13 +1,13 @@
 Package: webguard-server-agent
-Version: 0.1.1
+Version: 0.1.2
 Architecture: arm64
 Maintainer: WebGuard <security@marcel-breuer.dev>
 Depends: systemd
-Filename: pool/main/w/webguard-server-agent/webguard-server-agent_0.1.1_arm64.deb
-Size: 1930658
-MD5sum: 67eb61a3bd622f39d50502e355efbf84
-SHA1: 47ddf13f6cbbe452746e947efba5d67e3c669148
-SHA256: 9c5fcdf1521046e3431d4fdd23eaffae4a33ef1760abdd7228ff8ccc1a5d32b4
+Filename: pool/main/w/webguard-server-agent/webguard-server-agent_0.1.2_arm64.deb
+Size: 1930570
+MD5sum: 4b78b2c8dbbaa9558c83ea4978f5c9ca
+SHA1: 28bfe3d66c9d8499b4b4c34ad0d9cbf710b559dc
+SHA256: a804e6f3fa3f9d586c24343421cc5e5f7aa4abe048882912ed44b6507676fda6
 Section: admin
 Priority: optional
 Description: Privacy-focused outbound-only WebGuard server telemetry agent

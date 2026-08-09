@@ -73,6 +73,7 @@ jobs:
 
       - name: Build and validate APT repository
         env:
+          VERSION: ${{ needs.create-tag.outputs.tag }}
           GNUPGHOME: ${{ runner.temp }}/apt-gnupg
           GPG_KEY_ID: 15DC3CB2BDB5E3C325B15B5D54F445D599EAACA2
           APT_REPOSITORY_SIGNING_PASSPHRASE: ${{ secrets.APT_REPOSITORY_SIGNING_PASSPHRASE }}

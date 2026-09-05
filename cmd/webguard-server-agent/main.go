@@ -26,14 +26,13 @@ func main() {
 	configPath := flag.String("config", defaultConfigPath, "path to the JSON configuration file")
 	once := flag.Bool("once", false, "collect and report once")
 	status := flag.Bool("status", false, "validate configuration and show queued report count")
-	health := flag.Bool("health", false, "validate configuration and report local readiness")
 	showVersion := flag.Bool("version", false, "show the agent version")
 	flag.Parse()
 	if *showVersion || (flag.NArg() == 1 && flag.Arg(0) == "version") {
 		fmt.Println(version)
 		return
 	}
-	if err := run(*configPath, *once, *status || *health); err != nil {
+	if err := run(*configPath, *once, *status); err != nil {
 		log.Print(err)
 		os.Exit(1)
 	}

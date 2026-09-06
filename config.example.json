@@ -1,5 +1,5 @@
 {
-  "report_url": "https://webguard.example/api/v1/server-health/replace-with-report-token",
+  "report_url": "https://webguard.example/api/server-health/replace-with-report-token",
   "interval": "60s",
   "queue": {
     "directory": "/var/lib/webguard-server-agent/queue",

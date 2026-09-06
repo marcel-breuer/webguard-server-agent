@@ -10,7 +10,7 @@ import (
 
 func TestLoadAppliesSafeDefaults(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "agent.json")
-	content := `{"report_url":"https://app.example.test/api/v1/server-health/token","service_checks":[{"id":"health","type":"http","target":"http://127.0.0.1:8080/health"}]}`
+	content := `{"report_url":"https://app.example.test/api/server-health/token","service_checks":[{"id":"health","type":"http","target":"http://127.0.0.1:8080/health"}]}`
 	if err := os.WriteFile(path, []byte(content), 0o600); err != nil {
 		t.Fatal(err)
 	}
@@ -24,7 +24,7 @@ func TestLoadAppliesSafeDefaults(t *testing.T) {
 }
 func TestLoadRejectsInsecureConfigurationPermissions(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "agent.json")
-	if err := os.WriteFile(path, []byte(`{"report_url":"https://app.example.test/api/v1/server-health/token"}`), 0o644); err != nil {
+	if err := os.WriteFile(path, []byte(`{"report_url":"https://app.example.test/api/server-health/token"}`), 0o644); err != nil {
 		t.Fatal(err)
 	}
 	_, err := Load(path)

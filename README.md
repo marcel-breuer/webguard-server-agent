@@ -8,16 +8,12 @@ The agent sends the versioned Server Health report defined by the [Core API cont
 
 ## Install and configure
 
-### Debian and Ubuntu with APT
+### Debian and Ubuntu package
 
-The signed APT repository supports Debian 12 and Ubuntu 24.04 on `amd64` and `arm64`.
+Download the matching `.deb` package from the [GitHub release](https://github.com/marcel-breuer/webguard-server-agent/releases), verify it against `SHA256SUMS`, and install it:
 
 ```sh
-sudo install -d -m 0755 /etc/apt/keyrings
-curl -fsSL https://marcel-breuer.github.io/webguard-server-agent/webguard-server-agent-archive-keyring.asc | sudo tee /etc/apt/keyrings/webguard-server-agent.asc >/dev/null
-echo "deb [signed-by=/etc/apt/keyrings/webguard-server-agent.asc] https://marcel-breuer.github.io/webguard-server-agent stable main" | sudo tee /etc/apt/sources.list.d/webguard-server-agent.list >/dev/null
-sudo apt-get update
-sudo apt-get install webguard-server-agent
+sudo apt install ./webguard-server-agent_VERSION_ARCH.deb
 sudoedit /etc/webguard-server-agent/config.json
 sudo systemctl restart webguard-server-agent
 ```

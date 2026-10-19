@@ -44,11 +44,15 @@ func run(configPath string, once, status bool) error {
 	}
 	queue := delivery.NewQueue(cfg.Queue)
 	if status {
-		reports, err := queue.Reports()
+		stats, err := queue.Stats()
 		if err != nil {
 			return err
 		}
-		fmt.Printf("configured; %d report(s) queued\n", len(reports))
+		oldest := "none"
+		if stats.Count > 0 {
+			oldest = stats.OldestAge.Round(time.Second).String()
+		}
+		fmt.Printf("configured; queue %d/%d report(s), %d/%d bytes, oldest %s\n", stats.Count, stats.MaxCount, stats.Bytes, stats.MaxBytes, oldest)
 		return nil
 	}
 	client, err := delivery.NewClient(cfg)

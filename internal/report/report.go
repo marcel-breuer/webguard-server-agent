@@ -2,7 +2,10 @@ package report
 
 import "time"
 
-const SchemaVersion = 1
+const (
+	SchemaVersion   = 1
+	MaxPayloadBytes = 64 * 1024
+)
 
 type Payload struct {
 	SchemaVersion int            `json:"schema_version"`

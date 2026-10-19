@@ -2,7 +2,7 @@ VERSION ?= dev
 DIST_DIR ?= dist
 PACKAGE = webguard-server-agent
 
-.PHONY: build build-linux-amd64 build-linux-arm64 check fmt-check test vet dist deb clean
+.PHONY: build build-linux-amd64 build-linux-arm64 check fmt-check test vet bench dist deb clean
 
 build:
 	go build -trimpath -ldflags "-s -w -X main.version=$(VERSION)" -o bin/$(PACKAGE) ./cmd/$(PACKAGE)
@@ -23,6 +23,9 @@ test:
 
 vet:
 	go vet ./...
+
+bench:
+	GOMAXPROCS=1 go test ./internal/telemetry ./internal/delivery -run '^$$' -bench . -benchmem
 
 check: fmt-check vet test
 

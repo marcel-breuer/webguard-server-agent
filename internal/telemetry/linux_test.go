@@ -28,3 +28,21 @@ func TestParseCPURejectsInvalidInput(t *testing.T) {
 		t.Fatal("expected invalid CPU input to fail")
 	}
 }
+
+func BenchmarkCollectorCollect(b *testing.B) {
+	files := map[string][]byte{
+		procStat:    []byte("cpu  100 0 100 800 0 0 0 0 0 0\n"),
+		procLoadavg: []byte("1.42 1.10 0.94 1/100 1\n"),
+		procMeminfo: []byte("MemTotal: 1000 kB\nMemAvailable: 320 kB\nSwapTotal: 200 kB\nSwapFree: 150 kB\n"),
+		procUptime:  []byte("86400.9 1.0\n"),
+	}
+	collector := NewCollector()
+	collector.readFile = func(path string) ([]byte, error) { return files[path], nil }
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		if _, err := collector.Collect(); err != nil {
+			b.Fatal(err)
+		}
+	}
+}

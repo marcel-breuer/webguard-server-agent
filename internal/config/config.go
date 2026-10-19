@@ -11,7 +11,11 @@ import (
 	"time"
 )
 
-const DefaultInterval = 60 * time.Second
+const (
+	DefaultInterval = 60 * time.Second
+	MaxQueueBytes   = 64 * 1024 * 1024
+	MaxRetryDelay   = 5 * time.Minute
+)
 
 type Config struct {
 	ReportURL     string         `json:"report_url"`
@@ -113,10 +117,10 @@ func (c Config) Validate() error {
 	if c.Interval.Value() < 10*time.Second {
 		return fmt.Errorf("interval must be at least 10s")
 	}
-	if c.Retry.MaxAttempts < 1 || c.Retry.MaxAttempts > 10 || c.Retry.BaseDelay.Value() <= 0 || c.Retry.MaxDelay.Value() < c.Retry.BaseDelay.Value() {
+	if c.Retry.MaxAttempts < 1 || c.Retry.MaxAttempts > 10 || c.Retry.BaseDelay.Value() <= 0 || c.Retry.MaxDelay.Value() < c.Retry.BaseDelay.Value() || c.Retry.MaxDelay.Value() > MaxRetryDelay {
 		return fmt.Errorf("retry settings are invalid")
 	}
-	if c.Queue.Directory == "" || c.Queue.MaxBytes < 1024 || c.Queue.MaxAge.Value() < time.Minute {
+	if c.Queue.Directory == "" || c.Queue.MaxBytes < 1024 || c.Queue.MaxBytes > MaxQueueBytes || c.Queue.MaxAge.Value() < time.Minute {
 		return fmt.Errorf("queue settings are invalid")
 	}
 	if c.ProxyURL != "" {

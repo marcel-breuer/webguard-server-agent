@@ -44,7 +44,23 @@ For a manual upgrade, stop the unit, replace `/usr/bin/webguard-server-agent` wi
 
 ## Reliability and privacy
 
-The agent validates TLS, retries connection failures, timeouts, HTTP `429`, and `5xx` responses with bounded exponential backoff and jitter, then retains reports in a size- and age-limited local queue. Authentication and validation failures are not retried. Logs redact the report URL and never include its token.
+The agent verifies the report server using system certificate roots by default, supports an additional CA file, requires TLS 1.2 or newer when a custom CA is configured, and does not follow redirects. Reports are limited to 64 KiB, response bodies to 64 KiB, and each HTTP request to 15 seconds. Connection failures, timeouts, HTTP `429`, and `5xx` responses are retried at most 10 times with exponential backoff and jitter; the configured maximum delay is five minutes. Authentication, validation, redirect, and oversized-response failures are not retried. Logs redact the report URL and never include its token.
+
+The on-disk queue retains reports for the configured maximum age, up to 64 MiB and 4,096 reports. When it reaches either limit, it removes the oldest reports to make room. Each stored report is capped at 64 KiB. `--status` reads only local queue state and shows its report count, byte usage, and oldest report age; it does not contact the report endpoint. Host resource metrics are the documented report fields sent to Server Health, with no additional host inventory collected.
+
+## Collection and report contract
+
+Linux collection reads only `/proc/stat`, `/proc/loadavg`, `/proc/meminfo`, and `/proc/uptime`; the collector has no transport dependency. Optional service checks are limited to 20 configured loopback HTTP or TCP targets, each with a timeout of at most 30 seconds. HTTP checks do not follow redirects or read response bodies. The default sampling interval is 60 seconds and the minimum is 10 seconds.
+
+Reports use `schema_version: 1` and the field names represented by [the Core v1 fixture](testdata/core-v1-report.json). Compatible additions are optional JSON fields, which v1 decoders ignore. A change that renames or changes the meaning of an existing field requires a new schema version and a coordinated Core API rollout. Queued reports retain their original sample time and report ID across retries.
+
+To measure collection and delivery costs under constrained resources, run the benchmarks in the project container with one CPU and a 128 MiB memory limit:
+
+```sh
+make bench
+```
+
+The collection benchmark uses representative `/proc` samples and the delivery benchmark posts to a local test endpoint. Run them on the intended low-resource host class before changing sampling, retry, or queue defaults.
 
 The installed systemd unit uses a dedicated unprivileged user and hardening settings. It only permits outbound networking and access to its designated state directory.
 

@@ -26,7 +26,9 @@ func run(parent context.Context, check config.ServiceCheck) report.ServiceCheck 
 	case "http":
 		request, err := http.NewRequestWithContext(ctx, http.MethodGet, check.Target, nil)
 		if err == nil {
-			response, err := (&http.Client{}).Do(request)
+			response, err := (&http.Client{CheckRedirect: func(*http.Request, []*http.Request) error {
+				return http.ErrUseLastResponse
+			}}).Do(request)
 			if err == nil {
 				defer response.Body.Close()
 				status := response.StatusCode

@@ -38,3 +38,15 @@ func TestConfigRejectsNonLocalServiceTarget(t *testing.T) {
 		t.Fatalf("error = %v", err)
 	}
 }
+
+func TestConfigRejectsUnboundedQueueAndRetryBudgets(t *testing.T) {
+	base := Config{ReportURL: "https://app.example.test/report", Interval: Duration(DefaultInterval), Retry: Retry{MaxAttempts: 3, BaseDelay: Duration(time.Second), MaxDelay: Duration(time.Second)}, Queue: Queue{Directory: "/tmp/queue", MaxBytes: MaxQueueBytes + 1, MaxAge: Duration(time.Hour)}}
+	if err := base.Validate(); err == nil || !strings.Contains(err.Error(), "queue settings") {
+		t.Fatalf("error = %v, want queue budget rejection", err)
+	}
+	base.Queue.MaxBytes = 1024
+	base.Retry.MaxDelay = Duration(MaxRetryDelay + time.Second)
+	if err := base.Validate(); err == nil || !strings.Contains(err.Error(), "retry settings") {
+		t.Fatalf("error = %v, want retry budget rejection", err)
+	}
+}

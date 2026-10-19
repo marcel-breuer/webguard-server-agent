@@ -3,6 +3,7 @@ package report
 import (
 	"encoding/json"
 	"os"
+	"strings"
 	"testing"
 	"time"
 )
@@ -34,5 +35,21 @@ func TestCoreVersionOneFixtureCanBeDecoded(t *testing.T) {
 	}
 	if payload.SchemaVersion != SchemaVersion || payload.ReportID == "" || payload.Host.LogicalCPUCount == 0 {
 		t.Fatalf("invalid fixture payload: %+v", payload)
+	}
+}
+
+func TestVersionOnePayloadIgnoresFutureOptionalFields(t *testing.T) {
+	content, err := os.ReadFile("../../testdata/core-v1-report.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	futurePayload := strings.TrimSuffix(string(content), "\n")
+	futurePayload = strings.TrimSuffix(futurePayload, "}") + `,"future_optional_metric":42}`
+	var payload Payload
+	if err := json.Unmarshal([]byte(futurePayload), &payload); err != nil {
+		t.Fatalf("decode payload with additive field: %v", err)
+	}
+	if payload.SchemaVersion != SchemaVersion || payload.ReportID == "" {
+		t.Fatalf("known version-one fields changed: %+v", payload)
 	}
 }
